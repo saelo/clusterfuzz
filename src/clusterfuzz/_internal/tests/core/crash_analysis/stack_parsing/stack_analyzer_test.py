@@ -1206,12 +1206,27 @@ class StackAnalyzerTestcase(unittest.TestCase):
                                   expected_state, expected_stacktrace,
                                   expected_security_flag)
 
-  def test_v8_sandbox_violation(self):
-    """Test a v8 sandbox violation."""
-    data = self._read_test_data('v8_sandbox_violation.txt')
+  def test_v8_sandbox_violation_segv(self):
+    """Test a v8 sandbox violation observed as SIGSEGV."""
+    data = self._read_test_data('v8_sandbox_violation_segv.txt')
     expected_type = 'V8 sandbox violation'
     expected_address = '0x414141414141'
     expected_state = ('Builtins_JSToWasmWrapperAsm\n'
+                      'Builtins_JSToWasmWrapper\n'
+                      'Builtins_InterpreterEntryTrampoline\n')
+    expected_stacktrace = data
+    expected_security_flag = True
+
+    self._validate_get_crash_data(data, expected_type, expected_address,
+                                  expected_state, expected_stacktrace,
+                                  expected_security_flag)
+
+  def test_v8_sandbox_violation_asan(self):
+    """Test a v8 sandbox violation observed as ASan error."""
+    data = self._read_test_data('v8_sandbox_violation_asan.txt')
+    expected_type = 'V8 sandbox violation'
+    expected_address = '0x5765f349d5e8'
+    expected_state = ('ElementsAccessor\n'
                       'Builtins_JSToWasmWrapper\n'
                       'Builtins_InterpreterEntryTrampoline\n')
     expected_stacktrace = data
